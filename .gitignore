@@ -15,6 +15,7 @@
 *.so
 *.dylib
 *.dll
+*.os
 
 # Fortran module files
 *.mod
@@ -30,3 +31,7 @@
 *.exe
 *.out
 *.app
+
+*.sconsign.dblite
+
+nakama-cpp-sdk

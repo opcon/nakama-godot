@@ -1,0 +1,14 @@
+[general]
+
+singleton=false
+load_once=false
+symbol_prefix="godot_"
+reloadable=false
+
+[entry]
+
+X11.64="res://addons/nakama-godot/bin/x11/libnakamagodot.so"
+
+[dependencies]
+
+X11.64=[]

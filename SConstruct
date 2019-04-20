@@ -19,6 +19,9 @@ godot_headers_path = "godot-cpp/godot_headers/"
 cpp_bindings_path = "godot-cpp/"
 cpp_library = "libgodot-cpp"
 
+nakama_headers_path = "nakama-cpp-sdk/include"
+nakama_library_path = "nakama-cpp-sdk/libs/"
+
 # only support 64 at this time..
 bits = 64
 
@@ -55,6 +58,7 @@ elif env['platform'] in ('x11', 'linux'):
         env.Append(CCFLAGS = ['-fPIC', '-g3','-Og', '-std=c++17'])
     else:
         env.Append(CCFLAGS = ['-fPIC', '-g','-O3', '-std=c++17'])
+    nakama_library_path += "linux/"
 
 elif env['platform'] == "windows":
     env['target_path'] += 'win64/'
@@ -76,10 +80,50 @@ else:
 
 cpp_library += '.' + str(bits)
 
+
+nakama_library_path += 'x' + str(bits) + '/'
+nlibs = os.listdir(nakama_library_path)
+nlibs = Glob(nakama_library_path + '/*.a')
+
+lnlibs = [nakama_library_path + x for x in [
+    'libaddress_sorting.a',
+    'libcares.a',
+    'libcrypto.a',
+    'libgpr.a',
+    #'libgrpc++.a',
+    'libgrpc.a',
+    'libnakama-cpp.a',
+    'libprotobuf.a',
+    'libssl.a',
+    'libz.a'
+]]
+
+nlibs = [
+    'libboost_date_time',
+    'libboost_regex',
+    'libboost_system',
+    #'libaddress_sorting',
+    #'libcares',
+    #'libcrypto',
+    #'libgpr',
+    'libgrpc++',
+    #'libgrpc',
+    #'libnakama-cpp',
+    #'libprotobuf',
+    #'libssl',
+    #'libz'
+]
+
 # make sure our binding library is properly includes
-env.Append(CPPPATH=['.', godot_headers_path, cpp_bindings_path + 'include/', cpp_bindings_path + 'include/core/', cpp_bindings_path + 'include/gen/'])
-env.Append(LIBPATH=[cpp_bindings_path + 'bin/'])
+env.Append(CPPPATH=['.', godot_headers_path, cpp_bindings_path + 'include/', cpp_bindings_path + 'include/core/', cpp_bindings_path + 'include/gen/', nakama_headers_path])
+env.Append(LIBPATH=[cpp_bindings_path + 'bin/', nakama_library_path])
+
+env.Append(LIBS=nlibs)
 env.Append(LIBS=[cpp_library])
+
+env.Append(LINKFLAGS=['-Wl,--whole-archive', lnlibs, '-Wl,--no-whole-archive'])
+
+env.Append(CPPDEFINES="NLOGS_ENABLED");
 
 # tweak this if you want to use different folders, or more folders, to store your source code in.
 env.Append(CPPPATH=['src/'])
