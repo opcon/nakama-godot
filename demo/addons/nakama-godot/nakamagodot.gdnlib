@@ -11,4 +11,4 @@ X11.64="res://addons/nakama-godot/bin/x11/libnakamagodot.so"
 
 [dependencies]
 
-X11.64=[]
+X11.64=[  ]
